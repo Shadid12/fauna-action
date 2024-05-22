@@ -1,5 +1,5 @@
 name: fauna_db_actions
-description: Github action for automating Fauna databases. 
+description: Github action for automating Fauna databases.
 author: Fauna Labs
 branding:
   icon: 'database'
@@ -15,6 +15,10 @@ inputs:
   schema-directory:
     required: false
     default: './'
+  package-manager:
+    description: 'Package manager to use for dependency installation'
+    required: true
+    default: 'npm'
 
 outputs:
   test-result:
@@ -32,7 +36,13 @@ runs:
         node-version: ${{ inputs.node-version }}
 
     - name: Install dependencies
-      run: npm install
+      run: |
+        if [ "${{ inputs.package-manager }}" = "pnpm" ]; then
+          npm install -g pnpm
+          pnpm install
+        else
+          npm install
+        fi
       shell: bash
 
     - name: Install Fauna CLI
